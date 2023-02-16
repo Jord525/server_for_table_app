@@ -3,7 +3,7 @@ import TableModel from '../models/Table.js'
 export const update = async (req, res) => {
     const postId = req.params.id
 
-    const update = await TableModel.updateOne({
+    await TableModel.updateOne({
         _id: postId
     }, {
         productName: req.body.productName,
@@ -55,10 +55,21 @@ export const remove = (req, res) => {
 }
 
 export const findAll = async (req, res) => {
-    try {
-        const posts = await TableModel.find();
+    const { page = 1, limit = 10 } = req.query;
 
-        res.json(posts)
+    try {
+        const posts = await TableModel.find()
+            .limit(limit * 1)
+            .skip((page - 1) * limit)
+            .exec();
+
+        const count = await TableModel.count();
+
+        res.json({
+            posts,
+            totalPages: Math.ceil(count / limit),
+            currentPage: page
+        })
     } catch (error) {
         console.log(error)
         res.status(500).json({
