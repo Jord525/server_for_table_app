@@ -13,7 +13,7 @@ import { create, findAll, findOne, remove, update } from "./controllers/TableCon
 
 const app = express()
 app.use(cors())
-app.use(helmet)
+app.use(helmet())
 app.use(express.json())
 
 const port = process.env.PORT
