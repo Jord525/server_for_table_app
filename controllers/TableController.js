@@ -1,4 +1,5 @@
 import TableModel from '../models/Table.js'
+import { handleQuerySort } from '../service/handleQuerySort.js';
 
 export const update = async (req, res) => {
     const postId = req.params.id
@@ -56,12 +57,14 @@ export const remove = (req, res) => {
 
 export const findAll = async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
+    const sort = handleQuerySort(req.query.sort)
 
     try {
         const posts = await TableModel.find()
+            .sort(sort)
             .limit(limit * 1)
             .skip((page - 1) * limit)
-            .exec();
+            .exec()
 
         const count = await TableModel.count();
 
